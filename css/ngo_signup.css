@@ -1,0 +1,101 @@
+body{
+    margin: 0%;
+    padding: 0%;
+    background-color: rgb(9, 87, 87);
+}
+   .box{
+    margin-top: 22%;
+    width: 100%;
+    padding: 40px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%); 
+    background-color: rgb(19, 52, 53);
+    text-align: center;
+    border-radius: 12px;
+}
+
+
+.box h1{
+    color: white;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 32px;
+    
+}
+
+.input1{
+    border: 0;
+    background: none;
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+    border: 2px solid rgb(100, 157, 231);
+    padding: 14px 10px;
+    width: 280px;
+    outline: none;
+    color: white;
+    border-radius: 20px;
+    transition: 0.5s;
+}
+
+
+.input1:focus{
+width: 320px;
+border-color: rgb(191, 223, 132);  
+}
+
+.input1[type="submit"]{
+    border: 0;
+    background: none;
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+    border: 2px solid rgb(191, 223, 132);
+    padding: 14px 40px;
+    outline: none;
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.5s;
+    width: 180px;
+}
+
+.input1[type="submit"]:hover{
+background-color: yellowgreen;
+}
+
+.Cancel{
+    border: 0;
+    background: none;
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+    border: 2px solid rgb(191, 223, 132);
+    padding: 14px 40px;
+    outline: none;
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.5s;
+    width: 180px;
+}
+
+.Cancel:hover{
+background-color: yellowgreen;
+}
+.forprofile{
+    border: 0;
+    background: none;
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+    border: 2px solid rgb(100, 157, 231);
+    padding: 14px 10px;
+    width: 250px;
+    outline: none;
+    color: white;
+    border-radius: 20px;
+    transition: 0.5s;
+}

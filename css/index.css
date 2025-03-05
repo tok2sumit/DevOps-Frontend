@@ -1,0 +1,61 @@
+.btn:link,.btn:visited {
+    background-color: white;
+    color: black;
+    font-size:18px;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+  }
+  
+  .btn:hover,.btn:active {
+    background-color: green;
+    color: white;
+  }
+  
+  .contain{
+      width: 100%;
+      height: 45vh;
+      position: relative;
+      margin-bottom: 2px;
+  }
+  
+  .contain video{
+      width: 100%;
+      height: 100%;
+  }
+  .text-box{
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #000;
+      height: 100%;
+      width: 100%;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 50px;
+      font-weight: 900;
+      mix-blend-mode: multiply;
+  }
+  
+  .footera_bottom p {
+      background: #232323 none repeat scroll 0 0;
+      color: #cacaca;
+      font-family: "Roboto", sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+      height: 75px;
+      line-height: 75px;
+      margin: 0px 0 0;
+      padding: 0;
+      text-align: center;
+  }
+  
+  .footera_bottom p a {
+      color: #2ad880;
+      text-decoration: none;
+  }
+  
