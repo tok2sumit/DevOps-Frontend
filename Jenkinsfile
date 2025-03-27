@@ -38,22 +38,16 @@ pipeline {
                     # Fetch latest branches
                     git fetch origin
 
-                    # Stash any uncommitted changes to prevent conflicts
-                    git stash
-
                     # Check if gh-pages branch exists
                     if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
                         git checkout gh-pages
                         git pull origin gh-pages
                     else
-                        git checkout --orphan gh-pages
+                        git checkout -b gh-pages
                     fi
 
                     # Remove old files except .git
                     git rm -rf . 2>/dev/null || true
-
-                    # Restore stashed files (if needed)
-                    git stash pop || true
 
                     # Copy new build files
                     cp -r dist/* .  # Adjust 'dist' if your output directory is different
