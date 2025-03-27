@@ -35,20 +35,30 @@ pipeline {
                     git config --global user.email "tok2sumit@gmail.com"
                     git config --global user.name "Jenkins CI"
 
-                    # Fetch latest branch list
+                    # Fetch latest branches
                     git fetch origin
 
+                    # Stash any uncommitted changes to prevent conflicts
+                    git stash
+
                     # Check if gh-pages branch exists
-                    if git show-ref --verify --quiet refs/heads/gh-pages; then
+                    if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
                         git checkout gh-pages
+                        git pull origin gh-pages
                     else
                         git checkout --orphan gh-pages
                     fi
 
-                    # Remove old files & copy new build
-                    git rm -rf .
+                    # Remove old files except .git
+                    git rm -rf . 2>/dev/null || true
+
+                    # Restore stashed files (if needed)
+                    git stash pop || true
+
+                    # Copy new build files
                     cp -r dist/* .  # Adjust 'dist' if your output directory is different
 
+                    # Add and push changes
                     git add .
                     git commit -m "🚀 Deploying updated site via Jenkins"
                     git push --force https://$GIT_PASS@github.com/tok2sumit/DevOps-Frontend.git gh-pages
