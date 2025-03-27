@@ -1,33 +1,22 @@
 pipeline {
     agent any
 
-    environment {
-        GITHUB_REPO = 'https://github.com/tok2sumit/DevOps-Frontend.git'
-        GITHUB_TOKEN = credentials('GITHUB_TOKEN')  // Fetch from Jenkins credentials
-    }
-
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'master', credentialsId: 'GITHUB_TOKEN', url: "${GITHUB_REPO}"
+                git 'https://github.com/tok2sumit/DevOps-Frontend.git'
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Build with Maven') {
             steps {
-                sh 'npm install'  // Change if using another package manager
-            }
-        }
-
-        stage('Build') {
-            steps {
-                sh 'npm run build'  // Adjust if using a different build command
+                sh 'mvn clean package'  // Builds the project
             }
         }
 
         stage('Test') {
             steps {
-                sh 'npm test'  // Run tests, modify if needed
+                sh 'mvn test'  // Runs tests
             }
         }
 
@@ -38,7 +27,7 @@ pipeline {
                 git config --global user.name "Jenkins CI"
                 git checkout --orphan gh-pages
                 git rm -rf .
-                cp -r dist/* .  # Adjust 'dist' based on your build output folder
+                cp -r target/* .  # Adjust based on build output
                 git add .
                 git commit -m "Deploy from Jenkins"
                 git push --force origin gh-pages
