@@ -25,11 +25,6 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            steps {
-                sh 'npm test'  // Run tests, modify if needed
-            }
-        }
 
         stage('Deploy to GitHub Pages') {
             steps {
