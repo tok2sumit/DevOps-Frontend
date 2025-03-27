@@ -33,11 +33,12 @@ pipeline {
                     git config --global user.email "tok2sumit@gmail.com"
                     git config --global user.name "Jenkins CI"
 
-                    # Ensure we are in a clean state
-                    git checkout gh-pages || git checkout --orphan gh-pages
+                    # Fetch all branches and switch to gh-pages safely
+                    git fetch origin gh-pages
+                    git checkout gh-pages || git checkout -b gh-pages origin/gh-pages
+
+                    # Remove old files and copy new build
                     git rm -rf .
-                    
-                    # Copy built files
                     cp -r dist/* .
                     git add .
                     git commit -m "Deploy from Jenkins"
