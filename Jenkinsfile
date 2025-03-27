@@ -35,15 +35,19 @@ pipeline {
                     git config --global user.email "tok2sumit@gmail.com"
                     git config --global user.name "Jenkins CI"
 
+                    # Fetch latest branch list
+                    git fetch origin
+
                     # Check if gh-pages branch exists
-                    if git ls-remote --exit-code --heads origin gh-pages; then
+                    if git show-ref --verify --quiet refs/heads/gh-pages; then
                         git checkout gh-pages
                     else
                         git checkout --orphan gh-pages
                     fi
 
-                    git rm -rf .  # Clean old files
-                    cp -r ${BUILD_DIR}/* .  # Copy new build files
+                    # Remove old files & copy new build
+                    git rm -rf .
+                    cp -r dist/* .  # Adjust 'dist' if your output directory is different
 
                     git add .
                     git commit -m "🚀 Deploying updated site via Jenkins"
