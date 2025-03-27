@@ -1,0 +1,17 @@
+{
+    "name": "charityconnect-frontend",
+    "version": "1.0.0",
+    "description": "Frontend for CharityConnect",
+    "scripts": {
+      "build:css": "cleancss -o dist/style.min.css src/style.css",
+      "build:js": "terser src/script.js -o dist/script.min.js",
+      "build": "npm run build:css && npm run build:js",
+      "deploy": "gh-pages -d dist"
+    },
+    "devDependencies": {
+      "terser": "^5.16.0",
+      "clean-css-cli": "^5.5.2",
+      "gh-pages": "^5.0.0"
+    }
+  }
+  
