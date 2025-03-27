@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="css/style2.css">
     <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/donorsignup.css">
+    <script src="js/auth.js"></script>
+
 </head>
 <body>
 
@@ -58,7 +60,7 @@
 
 <div>
 
-    <form class="box"  method="POST">
+    <form class="box" onsubmit="signup(event)">
         <h1 style="margin-top: 12%;" class="text-center">Donor Registeration</h1>
             <input type="text" name="firstname" id="firstname" class="input1" placeholder="First Name" required>
             <input type="text" name="lastname" id="lastname" class="input1" placeholder="Last Name" required>
@@ -68,7 +70,7 @@
             <input type="number" name="confermpassword" id="confermpassword" class="input1" placeholder="Conferm-password" required>
             <input type="number" name="mobileno" id="mobileno" class="input1" placeholder="Mobile no" required>
             <input type="text" name="address" id="address" class="input1" placeholder="Address" required>
-            <input type="submit" name="submit" class="input1">
+            <button type="submit" name="submit" class="input1">Sign Up</button>
             <label style="color: white;"> Already Registered....!!</label>
             <button onclick="window.location.href='Donorlogin.html'" class="Cancel">Login</button>
         
