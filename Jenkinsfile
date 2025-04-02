@@ -11,7 +11,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 script {
-                    git branch: 'master', credentialsId: "${GITHUB_CREDENTIALS_ID}", url: "${GITHUB_REPO}"
+                    git branch: 'master', credentialsId: GITHUB_CREDENTIALS_ID, url: GITHUB_REPO
                 }
             }
         }
@@ -40,17 +40,16 @@ pipeline {
 
                     # Check if gh-pages branch exists remotely
                     if git ls-remote --exit-code --heads origin gh-pages; then
-                        git reset --hard  # Reset all untracked changes
-                        git clean -fd  # Remove all untracked files and directories
+                        git reset --hard  
+                        git clean -fd  
                         git checkout gh-pages
-                        git config pull.rebase false  # Merge instead of rebase
-                        git pull --rebase origin gh-pages || git pull --force origin gh-pages
+                        git pull origin gh-pages
                     else
                         git checkout --orphan gh-pages
                     fi
 
                     # Remove all except .git
-                    find . -mindepth 1 ! -regex "^\.\/\.git\(/.*\)?" -delete
+                    find . -mindepth 1 ! -regex '^./.git(/.*)?' -delete
 
                     # Copy new build files
                     cp -r ${BUILD_DIR}/* .
