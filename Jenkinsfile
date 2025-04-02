@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         GITHUB_REPO = 'https://github.com/tok2sumit/DevOps-Frontend.git'
-        GITHUB_CREDENTIALS_ID = 'GITHUB_TOKEN'  // Set in Jenkins Credentials
+        GITHUB_CREDENTIALS_ID = 'Frontend-CharityConnect'  // Set in Jenkins Credentials
         BUILD_DIR = 'dist'  // Change if using another output directory
     }
 
@@ -30,7 +30,7 @@ pipeline {
 
         stage('Deploy to GitHub Pages') {
             steps {
-                withCredentials([string(credentialsId: 'GITHUB_TOKEN', variable: 'GIT_PASS')]) {
+                withCredentials([string(credentialsId: 'Frontend-CharityConnect', variable: 'GIT_PASS')]) {
                     sh '''
                     git config --global user.email "tok2sumit@gmail.com"
                     git config --global user.name "Jenkins CI"
