@@ -3,61 +3,64 @@ pipeline {
 
     environment {
         GITHUB_REPO = 'https://github.com/tok2sumit/DevOps-Frontend.git'
-        GITHUB_CREDENTIALS_ID = 'Frontend-CharityConnect'  // Set in Jenkins Credentials
-        BUILD_DIR = 'dist'  // Change if using another output directory
+        GITHUB_CREDENTIALS_ID = 'Frontend-CharityConnect'
+        UAT_BRANCH = 'uat'
+        PROD_BRANCH = 'PRODUCTION'  // Updated to match your branch name
+        BUILD_DIR = 'dist'
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Checkout UAT Branch') {
             steps {
                 script {
-                    git branch: 'master', credentialsId: GITHUB_CREDENTIALS_ID, url: GITHUB_REPO
+                    git branch: "${UAT_BRANCH}", credentialsId: "${GITHUB_CREDENTIALS_ID}", url: "${GITHUB_REPO}"
                 }
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                sh 'npm install'  
             }
         }
 
         stage('Build') {
             steps {
-                sh 'npm run build'
+                sh '''
+                npm install
+                npm run build
+                '''
             }
         }
 
-        stage('Deploy to GitHub Pages') {
+        stage('Merge UAT into PRODUCTION') {
             steps {
-                withCredentials([string(credentialsId: 'Frontend-CharityConnect', variable: 'GIT_PASS')]) {
+                withCredentials([string(credentialsId: "${GITHUB_CREDENTIALS_ID}", variable: 'GIT_PASS')]) {
                     sh '''
                     git config --global user.email "tok2sumit@gmail.com"
                     git config --global user.name "Jenkins CI"
 
-                    # Fetch latest branches
-                    git fetch origin
+                    # Checkout PRODUCTION branch
+                    git checkout ${PROD_BRANCH}
 
-                    # Check if gh-pages branch exists remotely
-                    if git ls-remote --exit-code --heads origin gh-pages; then
-                        git reset --hard  
-                        git clean -fd  
-                        git checkout gh-pages
-                        git pull origin gh-pages
-                    else
-                        git checkout --orphan gh-pages
-                    fi
+                    # Merge UAT changes into PRODUCTION
+                    git merge --no-ff ${UAT_BRANCH} -m "🔀 Merging UAT changes into PRODUCTION"
 
-                    # Remove all except .git
-                    find . -mindepth 1 ! -regex '^./.git(/.*)?' -delete
+                    # Push changes to PRODUCTION branch
+                    git push https://$GIT_PASS@github.com/tok2sumit/DevOps-Frontend.git ${PROD_BRANCH}
+                    '''
+                }
+            }
+        }
 
-                    # Copy new build files
+        stage('Deploy') {
+            steps {
+                withCredentials([string(credentialsId: "${GITHUB_CREDENTIALS_ID}", variable: 'GIT_PASS')]) {
+                    sh '''
+                    # Checkout PRODUCTION branch
+                    git checkout ${PROD_BRANCH}
+
+                    # Copy built files
                     cp -r ${BUILD_DIR}/* .
 
-                    # Add and push changes
+                    # Commit and push built files
                     git add .
-                    git commit -m "🚀 Deploying updated site via Jenkins"
-                    git push --force https://$GIT_PASS@github.com/tok2sumit/DevOps-Frontend.git gh-pages
+                    git commit -m "🚀 Deploying latest build to PRODUCTION"
+                    git push --force https://$GIT_PASS@github.com/tok2sumit/DevOps-Frontend.git ${PROD_BRANCH}
                     '''
                 }
             }
@@ -66,10 +69,10 @@ pipeline {
 
     post {
         success {
-            echo "✅ Deployment successful! Site should be live."
+            echo "✅ UAT changes successfully merged, built, and deployed to PRODUCTION!"
         }
         failure {
-            echo "❌ Deployment failed. Check logs for errors."
+            echo "❌ Deployment failed! Check logs for errors."
         }
     }
 }
