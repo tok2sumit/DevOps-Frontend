@@ -47,7 +47,7 @@ pipeline {
                     fi
 
                     # Ensure only the necessary files are kept
-                    find . -mindepth 1 ! -regex '^./.git\(/.*\)?' -delete
+                    find . -mindepth 1 ! -path "./.git*" -delete
                     
                     # Copy new build files
                     cp -r ${BUILD_DIR}/* .
