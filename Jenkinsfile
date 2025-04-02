@@ -38,19 +38,19 @@ pipeline {
                     # Fetch latest branches
                     git fetch origin
 
-                    # Check if gh-pages branch exists
-                    if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
+                    # Check if gh-pages branch exists remotely
+                    if git ls-remote --exit-code --heads origin gh-pages; then
                         git checkout gh-pages
                         git pull origin gh-pages
                     else
-                        git checkout -b gh-pages
+                        git checkout --orphan gh-pages
                     fi
 
-                    # Remove old files except .git
-                    git rm -rf . 2>/dev/null || true
-
+                    # Ensure only the necessary files are kept
+                    find . -mindepth 1 ! -regex '^./.git\(/.*\)?' -delete
+                    
                     # Copy new build files
-                    cp -r dist/* .  # Adjust 'dist' if your output directory is different
+                    cp -r ${BUILD_DIR}/* .
 
                     # Add and push changes
                     git add .
