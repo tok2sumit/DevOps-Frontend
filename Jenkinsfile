@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         GITHUB_REPO = 'https://github.com/tok2sumit/DevOps-Frontend.git'
-        GITHUB_CREDENTIALS_ID = 'GITHUB_TOKEN'  // Set in Jenkins Credentials
+        GITHUB_CREDENTIALS_ID = 'Frontend-CharityConnect'  // Set in Jenkins Credentials
         BUILD_DIR = 'dist'  // Change if using another output directory
     }
 
@@ -11,7 +11,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 script {
-                    git branch: 'master', credentialsId: "${GITHUB_CREDENTIALS_ID}", url: "${GITHUB_REPO}"
+                    git branch: 'master', credentialsId: GITHUB_CREDENTIALS_ID, url: GITHUB_REPO
                 }
             }
         }
@@ -30,7 +30,7 @@ pipeline {
 
         stage('Deploy to GitHub Pages') {
             steps {
-                withCredentials([string(credentialsId: 'GITHUB_TOKEN', variable: 'GIT_PASS')]) {
+                withCredentials([string(credentialsId: 'Frontend-CharityConnect', variable: 'GIT_PASS')]) {
                     sh '''
                     git config --global user.email "tok2sumit@gmail.com"
                     git config --global user.name "Jenkins CI"
@@ -40,6 +40,8 @@ pipeline {
 
                     # Check if gh-pages branch exists remotely
                     if git ls-remote --exit-code --heads origin gh-pages; then
+                        git reset --hard  # Reset all untracked changes
+                        git clean -fd  # Remove all untracked files and directories
                         git checkout gh-pages
                         git pull origin gh-pages
                     else
@@ -47,8 +49,8 @@ pipeline {
                     fi
 
                     # Ensure only the necessary files are kept
-                    find . -mindepth 1 ! -path "./.git*" -delete
-                    
+                    find . -mindepth 1 ! -regex '^./.git\(/.*\)?' -delete
+
                     # Copy new build files
                     cp -r ${BUILD_DIR}/* .
 
