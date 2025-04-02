@@ -4,14 +4,15 @@ pipeline {
     environment {
         GITHUB_REPO = 'https://github.com/tok2sumit/DevOps-Frontend.git'
         GITHUB_CREDENTIALS_ID = 'Frontend-CharityConnect'  // Set in Jenkins Credentials
+        BRANCH_NAME = 'UAT'  // This pipeline triggers only on UAT changes
         BUILD_DIR = 'dist'  // Change if using another output directory
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Checkout UAT Branch') {
             steps {
                 script {
-                    git branch: 'master', credentialsId: GITHUB_CREDENTIALS_ID, url: GITHUB_REPO
+                    git branch: "${BRANCH_NAME}", credentialsId: "${GITHUB_CREDENTIALS_ID}", url: "${GITHUB_REPO}"
                 }
             }
         }
@@ -28,36 +29,28 @@ pipeline {
             }
         }
 
-        stage('Deploy to GitHub Pages') {
+        stage('Deploy to UAT Branch') {
             steps {
                 withCredentials([string(credentialsId: 'Frontend-CharityConnect', variable: 'GIT_PASS')]) {
                     sh '''
                     git config --global user.email "tok2sumit@gmail.com"
                     git config --global user.name "Jenkins CI"
 
-                    # Fetch latest branches
-                    git fetch origin
+                    # Ensure we are on the correct branch
+                    git checkout ${BRANCH_NAME}
+                    git pull origin ${BRANCH_NAME}
 
-                    # Check if gh-pages branch exists remotely
-                    if git ls-remote --exit-code --heads origin gh-pages; then
-                        git reset --hard  
-                        git clean -fd  
-                        git checkout gh-pages
-                        git pull origin gh-pages
-                    else
-                        git checkout --orphan gh-pages
-                    fi
-
-                    # Remove all except .git
-                    find . -mindepth 1 ! -regex '^./.git(/.*)?' -delete
+                    # Remove old build files
+                    git rm -r --ignore-unmatch ${BUILD_DIR}
+                    mkdir -p ${BUILD_DIR}
 
                     # Copy new build files
                     cp -r ${BUILD_DIR}/* .
 
-                    # Add and push changes
+                    # Add and commit changes
                     git add .
-                    git commit -m "🚀 Deploying updated site via Jenkins"
-                    git push --force https://$GIT_PASS@github.com/tok2sumit/DevOps-Frontend.git gh-pages
+                    git commit -m "🚀 Deploying updated UAT build via Jenkins"
+                    git push https://$GIT_PASS@github.com/tok2sumit/DevOps-Frontend.git ${BRANCH_NAME}
                     '''
                 }
             }
@@ -66,10 +59,10 @@ pipeline {
 
     post {
         success {
-            echo "✅ Deployment successful! Site should be live."
+            echo "✅ UAT deployment successful! Check the branch for updates."
         }
         failure {
-            echo "❌ Deployment failed. Check logs for errors."
+            echo "❌ UAT deployment failed. Check logs for errors."
         }
     }
 }
