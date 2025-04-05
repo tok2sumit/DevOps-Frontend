@@ -31,30 +31,30 @@ pipeline {
             }
         }
 
-        stage('Deploy to UAT Branch') {
+       stage('Deploy to UAT Branch') {
             steps {
                 withCredentials([string(credentialsId: "${GITHUB_CREDENTIALS_ID}", variable: 'GIT_PASS')]) {
                     sh '''
-                    git config user.email "tok2sumit@gmail.com"
-                    git config user.name "Jenkins CI"
+                    git config --global user.email "tok2sumit@gmail.com"
+                    git config --global user.name "Jenkins CI"
 
-                    # Ensure on correct branch
                     git checkout ${BRANCH_NAME}
                     git pull origin ${BRANCH_NAME}
 
-                    # Remove old build and copy new build
-                    git rm -r --ignore-unmatch ${BUILD_DIR}
-                    cp -r ${BUILD_DIR}/* .
+                    # Clean up previous build files in root (NOT dist)
+                    rm -f index.html scripts.min.js style.min.css
 
-                    # Commit and push
-                    git add .
-                    git commit -m "🚀 Auto-deploy UAT build via Jenkins"
+                    # Copy new build files from dist to root
+                    cp -v dist/* .
+
+                    # Add, commit, and push changes
+                    git add index.html scripts.min.js style.min.css
+                    git commit -m "🚀 Auto-deploy UAT build via Jenkins" || echo "No changes to commit"
                     git push https://$GIT_PASS@github.com/tok2sumit/DevOps-Frontend.git ${BRANCH_NAME}
                     '''
                 }
             }
         }
-    }
 
     post {
         success {
