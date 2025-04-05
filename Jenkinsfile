@@ -25,9 +25,15 @@ pipeline {
             }
         }
 
-        stage('Build Frontend') {
+        stage('Clean & Build Frontend') {
             steps {
-                sh 'npm run build'
+                sh '''
+                    # Remove old build directory
+                    rm -rf dist/
+                    
+                    # Run fresh build
+                    npm run build
+                '''
             }
         }
 
@@ -41,17 +47,8 @@ pipeline {
                         git checkout ${BRANCH_NAME}
                         git pull origin ${BRANCH_NAME}
 
-                        # Clean up previous build files in dist
-                        rm -rf dist/*
-
-                        # Run build
-                        npm run build
-
-                        # Copy new build files to dist/
-                        cp -r dist/* dist/
-
-                        # Commit and push changes from dist only
-                        git add dist/*
+                        # Stage and push only updated dist folder
+                        git add dist/
                         git commit -m "🚀 Auto-deploy UAT build via Jenkins" || echo "No changes to commit"
                         git push https://$GIT_PASS@github.com/tok2sumit/DevOps-Frontend.git ${BRANCH_NAME}
                     '''
