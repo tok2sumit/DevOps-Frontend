@@ -41,14 +41,17 @@ pipeline {
                         git checkout ${BRANCH_NAME}
                         git pull origin ${BRANCH_NAME}
 
-                        # Clean up previous build files in root (NOT dist)
-                        rm -f index.html scripts.min.js style.min.css
+                        # Clean up previous build files in dist
+                        rm -rf dist/*
 
-                        # Copy new build files from dist to root
-                        cp -r dist/* .
+                        # Run build
+                        npm run build
 
-                        # Add, commit, and push changes
-                        git add .
+                        # Copy new build files to dist/
+                        cp -r dist/* dist/
+
+                        # Commit and push changes from dist only
+                        git add dist/*
                         git commit -m "🚀 Auto-deploy UAT build via Jenkins" || echo "No changes to commit"
                         git push https://$GIT_PASS@github.com/tok2sumit/DevOps-Frontend.git ${BRANCH_NAME}
                     '''
