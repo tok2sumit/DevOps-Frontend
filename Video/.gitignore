@@ -1,0 +1,30 @@
+# Node.js dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.*
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+
+# VSCode settings
+.vscode/
+
+# Optional: Ignore coverage reports
+coverage/
+
+# Optional: Ignore Jenkins workspace data (if syncing from Jenkins to local)
+.jenkins/
+
+# Ignore package lock if you're using Yarn instead
+package-lock.json
