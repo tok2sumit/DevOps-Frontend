@@ -45,10 +45,10 @@ pipeline {
                     rm -f index.html scripts.min.js style.min.css
 
                     # Copy new build files from dist to root
-                    cp -v dist/* .
+                    cp -r dist/* dist/
 
                     # Add, commit, and push changes
-                    git add index.html scripts.min.js style.min.css
+                    git add dist/*
                     git commit -m "🚀 Auto-deploy UAT build via Jenkins" || echo "No changes to commit"
                     git push https://$GIT_PASS@github.com/tok2sumit/DevOps-Frontend.git ${BRANCH_NAME}
                     '''
