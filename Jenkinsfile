@@ -1,11 +1,15 @@
 pipeline {
     agent any
 
+    triggers {
+        githubPush()
+    }
+
     environment {
         GITHUB_REPO = 'https://github.com/tok2sumit/DevOps-Frontend.git'
-        GITHUB_CREDENTIALS_ID = 'Frontend-CharityConnect'  // Set in Jenkins Credentials
-        BRANCH_NAME = 'UAT'  // This pipeline triggers only on UAT changes
-        BUILD_DIR = 'dist'  // Change if using another output directory
+        GITHUB_CREDENTIALS_ID = 'Frontend-CharityConnect'
+        BRANCH_NAME = 'UAT'
+        BUILD_DIR = 'dist'
     }
 
     stages {
@@ -19,7 +23,7 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'  
+                sh 'npm install'
             }
         }
 
@@ -31,27 +35,17 @@ pipeline {
 
         stage('Deploy to UAT Branch') {
             steps {
+                echo "diployment started"
                 withCredentials([string(credentialsId: 'Frontend-CharityConnect', variable: 'GIT_PASS')]) {
-                    sh '''
-                    git config --global user.email "tok2sumit@gmail.com"
-                    git config --global user.name "Jenkins CI"
+                    sh """
+                        git config --global user.email "tok2sumit@gmail.com"
+                        git config --global user.name "Jenkins CI"
 
-                    # Ensure we are on the correct branch
-                    git checkout ${BRANCH_NAME}
-                    git pull origin ${BRANCH_NAME}
-
-                    # Remove old build files
-                    git rm -r --ignore-unmatch ${BUILD_DIR}
-                    mkdir -p ${BUILD_DIR}
-
-                    # Copy new build files
-                    cp -r ${BUILD_DIR}/* .
-
-                    # Add and commit changes
-                    git add .
-                    git commit -m "🚀 Deploying updated UAT build via Jenkins"
-                    git push https://$GIT_PASS@github.com/tok2sumit/DevOps-Frontend.git ${BRANCH_NAME}
-                    '''
+                        # Add and commit new build
+                        git add ${BUILD_DIR}
+                        git commit -m "🚀 Deploying updated UAT build via Jenkins" || echo "Nothing to commit"
+                        git push https://$GIT_PASS@github.com/tok2sumit/DevOps-Frontend.git ${BRANCH_NAME}
+                    """
                 }
             }
         }
